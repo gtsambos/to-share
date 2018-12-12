@@ -1,2 +1,2 @@
 # to-share
-Contains various media to share.
+A public repo containing various media to share.
