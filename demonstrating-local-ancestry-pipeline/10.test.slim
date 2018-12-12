@@ -1,0 +1,54 @@
+// set up a simple neutral simulation
+initialize() {
+
+	setwd("/Users/gtsambos/Projects/AdmixtureSim/6.true.local.ancestry/exploratory");
+	
+	setSeed(13131313131313);
+		
+	initializeSLiMModelType("WF");
+	
+	initializeSLiMOptions(keepPedigrees = T); // Keep pedigree information
+   initializeTreeSeq();
+   initializeMutationRate(0);
+	
+	// m1 mutation type: neutral
+   initializeMutationType("m1", 0.5, "f", 0.0);
+	
+	// g1 genomic element type: uses m1 for all mutations
+	initializeGenomicElementType("g1", m1, 1.0);
+	
+	// uniform chromosome of length 9 b with uniform recombination
+	initializeGenomicElement(g1, 0, 9);
+	initializeRecombinationRate(1e-1);
+}
+
+// create 2 populations of 3 individuals each
+1 early() {
+	sim.addSubpop("p0", 3);
+	sim.addSubpop("p1", 3);
+
+	sim.treeSeqRememberIndividuals(sim.subpopulations.individuals);
+}
+
+// create admixing population
+1 late() {  
+        
+        // Add admixing population.
+        sim.addSubpop("p2",3);
+        p2.setMigrationRates(c(p0,p1),c(0.5, 0.5));
+        
+}
+
+// no subsequent migration into admixed population.
+2 late() {
+
+        p2.setMigrationRates(c(p0,p1),c(0.0,0.0));
+
+}
+
+5 late() {
+	sim.treeSeqOutput("10.test.trees");
+	sim.simulationFinished();
+}
+
+
